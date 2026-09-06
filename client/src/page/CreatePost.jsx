@@ -15,7 +15,13 @@ const CreatePost = () => {
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [sharingImg, setSharingImg] = useState(false);
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'error') => {
+    setToast({message, type});
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleFieldChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -25,10 +31,15 @@ const CreatePost = () => {
   };
 
   const generateImage = async () => {
+    if (!form.name) {
+      showToast('Please enter your name');
+      return;
+    }
+
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        const response = await fetch('http://localhost:8080/api/v1/dalle', {
+        const response = await fetch('http://localhost:8080/api/v1/image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -38,15 +49,17 @@ const CreatePost = () => {
           }),
         });
 
+        if (!response.ok) throw new Error('Failed to generate image');
+
         const data = await response.json();
         setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
       } catch (err) {
-        alert(err);
+        showToast(err.message || 'Failed to generate image');
       } finally {
         setGeneratingImg(false);
       }
     } else {
-      alert('Please provide proper prompt');
+      showToast('Please provide proper prompt');
     }
   };
 
@@ -54,7 +67,7 @@ const CreatePost = () => {
     e.preventDefault();
 
     if (form.prompt && form.photo) {
-      setLoading(true);
+      setSharingImg(true);
       try {
         const response = await fetch('http://localhost:8080/api/v1/post', {
           method: 'POST',
@@ -65,15 +78,15 @@ const CreatePost = () => {
         });
 
         await response.json();
-        alert('Success');
-        navigate('/');
+        showToast('Image shared successfully!', 'success');
+        setTimeout(() => navigate('/'), 1500);
       } catch (err) {
-        alert(err);
+        showToast(err.message || 'Failed to share image');
       } finally {
-        setLoading(false);
+        setSharingImg(false);
       }
     } else {
-      alert('Please generate an image with proper details');
+      showToast('Please generate an image first');
     }
   };
 
@@ -81,7 +94,7 @@ const CreatePost = () => {
     <section className="max-w-7xl mx-auto">
       <div>
         <h1 className="font-extrabold text-[#222328] text-[32px]">Create</h1>
-        <p className="mt-2 text-[#666e75] text-[14px] max-w-[500px]">Generate an imaginative image through DALL-E AI and share it with the community</p>
+        <p className="mt-2 text-[#666e75] text-[14px]">Generate an imaginative image on Picasso AI and share it with the community</p>
       </div>
 
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
@@ -90,7 +103,7 @@ const CreatePost = () => {
             labelName="Your Name"
             type="text"
             name="name"
-            placeholder="Ex., john doe"
+            placeholder="John Doe"
             value={form.name}
             handleChange={handleFieldChange}
           />
@@ -133,22 +146,31 @@ const CreatePost = () => {
           <button
             type="button"
             onClick={generateImage}
-            className=" text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            disabled={generatingImg}
+            className=" text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
         </div>
 
         <div className="mt-10">
-          <p className="mt-2 text-[#666e75] text-[14px]">** Once you have created the image you want, you can share it with others in the community **</p>
+          <p className="mt-2 text-[#666e75] text-[14px] font-bold">Once you have created the image you want, you can share it with others in the community</p>
           <button
             type="submit"
-            className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            disabled={sharingImg}
+            className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Sharing...' : 'Share with the Community'}
+            {sharingImg ? 'Sharing...' : 'Share with the Community'}
           </button>
         </div>
       </form>
+      {
+        toast && (
+          <div className={`fixed bottom-6 right-6 px-5 py-3 rounded-lg shadow-lg text-sm font-medium text-white ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-500'}`}>
+            {toast.message}
+          </div>
+        )
+      }
     </section>
   );
 };
