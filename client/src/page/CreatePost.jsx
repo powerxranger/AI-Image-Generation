@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
@@ -18,6 +18,7 @@ const CreatePost = () => {
   const [generatingImg, setGeneratingImg] = useState(false);
   const [sharingImg, setSharingImg] = useState(false);
   const [toast, setToast] = useState(null);
+  const [generatedPrompt, setGeneratedPrompt] = useState(location.state?.prompt || '');
 
   const showToast = (message, type = 'error') => {
     setToast({ message, type });
@@ -49,6 +50,7 @@ const CreatePost = () => {
 
         const data = await response.json();
         setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+        setGeneratedPrompt(form.prompt);
       } catch (err) {
         showToast(err.message || 'Failed to generate image');
       } finally {
@@ -93,6 +95,13 @@ const CreatePost = () => {
 
   return (
     <section className="max-w-7xl mx-auto">
+      <Link to="/" className="inline-flex items-center gap-1.5 text-gray-500 hover:text-white text-sm transition-colors mb-6">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Browse gallery
+      </Link>
+
       <div>
         <h1 className="font-extrabold text-white text-[40px] leading-tight tracking-tight">Create <span className="bg-gradient-to-r from-[#6469ff] to-[#a855f7] bg-clip-text text-transparent">& Share</span></h1>
         <p className="mt-3 text-gray-300 text-[15px] leading-relaxed">Generate an imaginative image through Picasso AI and share it with the community</p>
@@ -109,19 +118,24 @@ const CreatePost = () => {
             handleChange={handleFieldChange}
           />
 
-          <FormField
-            labelName="Prompt"
-            type="text"
-            name="prompt"
-            placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
-            value={form.prompt}
-            handleChange={handleFieldChange}
-            isSurpriseMe
-            handleSurpriseMe={handleSurpriseMe}
-          />
+          <div>
+            <FormField
+              labelName="Prompt"
+              type="text"
+              name="prompt"
+              placeholder="An Impressionist oil painting of sunflowers in a purple vase…"
+              value={form.prompt}
+              handleChange={handleFieldChange}
+              isSurpriseMe
+              handleSurpriseMe={handleSurpriseMe}
+            />
+            <p className={`mt-1.5 text-xs text-right ${form.prompt.length > 450 ? 'text-red-400' : 'text-gray-200'}`}>
+              {form.prompt.length} / 500
+            </p>
+          </div>
 
           <div className="relative bg-[#1a1a2e] border border-[#2a2a3e] text-gray-400 text-sm rounded-lg w-64 p-3 h-64 flex justify-center items-center">
-            { form.photo ? (
+            {form.photo ? (
               <img
                 src={form.photo}
                 alt={form.prompt}
@@ -143,14 +157,14 @@ const CreatePost = () => {
           </div>
         </div>
 
-        <div className="mt-5 flex gap-5">
+        <div className="mt-5 flex gap-3">
           <button
             type="button"
             onClick={generateImage}
             disabled={generatingImg}
             className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {generatingImg ? 'Generating...' : 'Generate'}
+            {generatingImg ? 'Generating...' : (form.photo && form.prompt === generatedPrompt) ? 'Regenerate' : 'Generate'}
           </button>
         </div>
 
