@@ -7,7 +7,7 @@ Enter a text prompt, generate stunning images using **FLUX AI** (via Hugging Fac
 
 ## Demo
 
-![Picasso AI Demo](./screenshots/demo.gif)
+![Picasso AI Demo](./demo/picassoAi.mp4)
 
 ---
 
