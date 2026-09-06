@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
@@ -7,10 +7,11 @@ import { FormField, Loader } from '../components';
 
 const CreatePost = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [form, setForm] = useState({
     name: '',
-    prompt: '',
+    prompt: location.state?.prompt || '',
     photo: '',
   });
 
@@ -19,7 +20,7 @@ const CreatePost = () => {
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = 'error') => {
-    setToast({message, type});
+    setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
@@ -31,11 +32,6 @@ const CreatePost = () => {
   };
 
   const generateImage = async () => {
-    if (!form.name) {
-      showToast('Please enter your name');
-      return;
-    }
-
     if (form.prompt) {
       try {
         setGeneratingImg(true);
@@ -59,12 +55,17 @@ const CreatePost = () => {
         setGeneratingImg(false);
       }
     } else {
-      showToast('Please provide proper prompt');
+      showToast('Please provide a prompt');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.name) {
+      showToast('Please enter your name');
+      return;
+    }
 
     if (form.prompt && form.photo) {
       setSharingImg(true);
@@ -97,7 +98,7 @@ const CreatePost = () => {
         <p className="mt-3 text-gray-300 text-[15px] leading-relaxed">Generate an imaginative image through Picasso AI and share it with the community</p>
       </div>
 
-      <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
+      <form className="mt-16 max-w-3xl" onSubmit={handleSubmit} noValidate>
         <div className="flex flex-col gap-5">
           <FormField
             labelName="Your Name"
@@ -147,7 +148,7 @@ const CreatePost = () => {
             type="button"
             onClick={generateImage}
             disabled={generatingImg}
-            className=" text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {generatingImg ? 'Generating...' : 'Generate'}
           </button>
@@ -164,13 +165,11 @@ const CreatePost = () => {
           </button>
         </div>
       </form>
-      {
-        toast && (
-          <div className={`fixed bottom-6 right-6 px-5 py-3 rounded-lg shadow-lg text-sm font-medium text-white ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-500'}`}>
-            {toast.message}
-          </div>
-        )
-      }
+      {toast && (
+        <div className={`fixed bottom-6 right-6 px-5 py-3 rounded-lg shadow-lg text-sm font-medium text-white ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-500'}`}>
+          {toast.message}
+        </div>
+      )}
     </section>
   );
 };
