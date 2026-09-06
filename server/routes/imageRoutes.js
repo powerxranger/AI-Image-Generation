@@ -1,31 +1,25 @@
 import express from 'express';
 import * as dotenv from 'dotenv';
-import { InferenceClient } from '@huggingface/inference';
 
 dotenv.config();
 
 const router = express.Router();
 
-const client = new InferenceClient(process.env.HF_TOKEN);
-
 router.route('/').get((req, res) => {
-  res.status(200).json({ message: 'Hello from Hugging Face!' });
+  res.status(200).json({ message: 'Hello from Pollinations AI!' });
 });
 
 router.route('/').post(async (req, res) => {
   try {
     const { prompt } = req.body;
 
-    const imageBlob = await client.textToImage({
-      model: 'black-forest-labs/FLUX.1-schnell',
-      inputs: prompt,
-      parameters: {
-        width: 512,
-        height: 512,
-      }
-    });
+    const seed = Math.floor(Math.random() * 1000000);
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&nologo=true&model=flux&seed=${seed}`;
+    const response = await fetch(url);
 
-    const buffer = Buffer.from(await imageBlob.arrayBuffer());
+    if (!response.ok) throw new Error('Failed to generate image');
+
+    const buffer = Buffer.from(await response.arrayBuffer());
     const b64 = buffer.toString('base64');
     res.status(200).json({ photo: b64 });
   } catch (error) {

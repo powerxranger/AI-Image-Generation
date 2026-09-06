@@ -35,6 +35,13 @@ const Home = () => {
   const [allPosts, setAllPosts] = useState(null);
   const [sortOrder, setSortOrder] = useState('newest');
 
+  const sortOptions = [
+    { value: 'newest', label: 'Newest first' },
+    { value: 'oldest', label: 'Oldest first' },
+    { value: 'az', label: 'Creator A-Z' },
+    { value: 'za', label: 'Creator Z-A' },
+  ];
+
   const [searchText, setSearchText] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState(null);
@@ -76,9 +83,14 @@ const Home = () => {
     );
   };
 
-  const sortedPosts = allPosts
-    ? sortOrder === 'newest' ? allPosts : [...allPosts].reverse()
-    : null;
+  const sortedPosts = allPosts ? [...allPosts].sort((a, b) => {
+    if (sortOrder === 'oldest') return 0; // allPosts is already newest-first, reverse gives oldest
+    if (sortOrder === 'az') return a.name.localeCompare(b.name);
+    if (sortOrder === 'za') return b.name.localeCompare(a.name);
+    return 0; // newest: keep original order
+  }) : null;
+
+  const displayPosts = sortOrder === 'oldest' ? (allPosts ? [...allPosts].reverse() : null) : sortedPosts;
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -108,13 +120,20 @@ const Home = () => {
           />
         </div>
         {allPosts && (
-          <button
-            type="button"
-            onClick={() => setSortOrder((s) => (s === 'newest' ? 'oldest' : 'newest'))}
-            className="px-4 py-3 rounded-lg bg-[#1a1a2e] border border-[#2a2a3e] text-gray-300 text-sm hover:text-white hover:border-[#6469ff] transition-colors whitespace-nowrap"
-          >
-            {sortOrder === 'newest' ? 'Newest first' : 'Oldest first'}
-          </button>
+          <div className="relative">
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="appearance-none pl-4 pr-8 py-3 rounded-lg bg-[#1a1a2e] border border-[#2a2a3e] text-gray-300 text-sm hover:border-[#6469ff] focus:border-[#6469ff] outline-none transition-colors cursor-pointer"
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         )}
       </div>
 
@@ -138,7 +157,7 @@ const Home = () => {
                   <RenderCards data={searchedResults} title="No Search Results Found" />
                 )
               ) : (
-                <RenderCards data={sortedPosts} title="No Posts Yet" />
+                <RenderCards data={displayPosts} title="No Posts Yet" />
               )}
             </div>
           </>

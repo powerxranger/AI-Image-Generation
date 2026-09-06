@@ -9,6 +9,7 @@ const FormField = ({
   handleChange,
   isSurpriseMe,
   handleSurpriseMe,
+  maxLength,
 }) => (
   <div>
     <div className="flex items-center gap-2 mb-2">
@@ -37,6 +38,7 @@ const FormField = ({
       value={value}
       onChange={handleChange}
       required
+      maxLength={maxLength}
     />
   </div>
 );

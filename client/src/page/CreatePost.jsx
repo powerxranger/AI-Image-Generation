@@ -128,6 +128,7 @@ const CreatePost = () => {
               handleChange={handleFieldChange}
               isSurpriseMe
               handleSurpriseMe={handleSurpriseMe}
+              maxLength={500}
             />
             <p className={`mt-1.5 text-xs text-right ${form.prompt.length > 450 ? 'text-red-400' : 'text-gray-200'}`}>
               {form.prompt.length} / 500
