@@ -93,8 +93,8 @@ const CreatePost = () => {
   return (
     <section className="max-w-7xl mx-auto">
       <div>
-        <h1 className="font-extrabold text-[#222328] text-[32px]">Create</h1>
-        <p className="mt-2 text-[#666e75] text-[14px]">Generate an imaginative image on Picasso AI and share it with the community</p>
+        <h1 className="font-extrabold text-white text-[32px]">Create</h1>
+        <p className="mt-2 text-gray-400 text-[14px]">Generate an imaginative image on Picasso AI and share it with the community</p>
       </div>
 
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
@@ -119,7 +119,7 @@ const CreatePost = () => {
             handleSurpriseMe={handleSurpriseMe}
           />
 
-          <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center">
+          <div className="relative bg-[#1a1a2e] border border-[#2a2a3e] text-gray-400 text-sm rounded-lg w-64 p-3 h-64 flex justify-center items-center">
             { form.photo ? (
               <img
                 src={form.photo}
@@ -154,7 +154,7 @@ const CreatePost = () => {
         </div>
 
         <div className="mt-10">
-          <p className="mt-2 text-[#666e75] text-[14px] font-bold">Once you have created the image you want, you can share it with others in the community</p>
+          <p className="mt-2 text-gray-500 text-[14px] font-bold">Once you have created the image you want, you can share it with others in the community</p>
           <button
             type="submit"
             disabled={sharingImg}

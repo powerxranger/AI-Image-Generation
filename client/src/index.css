@@ -6,6 +6,11 @@
     font-family: 'Inter', sans-serif;
 }
 
+body {
+    background-color: #0d0d14;
+    color: #f9fafb;
+}
+
 .prompt::-webkit-scrollbar {
     width: 5px;
 }
