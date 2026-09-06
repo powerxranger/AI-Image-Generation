@@ -39,7 +39,7 @@ const CreatePost = () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        const response = await fetch('http://localhost:8080/api/v1/image', {
+        const response = await fetch(`${import.meta.env.SERVER_URL || 'http://localhost:8080'}/api/v1/image`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const CreatePost = () => {
     if (form.prompt && form.photo) {
       setSharingImg(true);
       try {
-        const response = await fetch('http://localhost:8080/api/v1/post', {
+        const response = await fetch(`${import.meta.env.SERVER_URL || 'http://localhost:8080'}/api/v1/post`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

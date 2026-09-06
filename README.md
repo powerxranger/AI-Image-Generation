@@ -72,7 +72,7 @@ The app will be available at http://localhost:5173 and the API at http://localho
 ---
 
 Project Structure
-
+```
 AI-Image-Generation/
 ├── client/        # React frontend
 ├── server/        # Node & Express backend
