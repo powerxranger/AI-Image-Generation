@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 
 import { preview } from '../assets';
@@ -16,6 +16,7 @@ const CreatePost = () => {
   });
 
   const [generatingImg, setGeneratingImg] = useState(false);
+  const [generatingMsg, setGeneratingMsg] = useState(false);
   const [sharingImg, setSharingImg] = useState(false);
   const [toast, setToast] = useState(null);
   const [generatedPrompt, setGeneratedPrompt] = useState(location.state?.prompt || '');
@@ -93,6 +94,26 @@ const CreatePost = () => {
     }
   };
 
+  const generatingMessages = [
+    'Generating your image...',
+    'Painting the details...',
+    'Mixing colors and textures...',
+    'Adding finishing touches...',
+    'Almost there...',
+    'Just a little longer...',
+  ];
+
+  useEffect(() => {
+    if (!generatingImg) return;
+    setGeneratingMsg(generatingMessages[0]);
+    let i = 1;
+    const interval = setInterval(() => {
+      setGeneratingMsg(generatingMessages[i % generatingMessages.length]);
+      i++;
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [generatingImg]);
+
   return (
     <section className="max-w-7xl mx-auto">
       <Link to="/" className="inline-flex items-center gap-1.5 text-gray-500 hover:text-white text-sm transition-colors mb-6">
@@ -158,14 +179,16 @@ const CreatePost = () => {
           </div>
         </div>
 
-        <div className="mt-5 flex gap-3">
+        <div className="mt-5">
           <button
             type="button"
             onClick={generateImage}
             disabled={generatingImg}
-            className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:cursor-not-allowed"
           >
-            {generatingImg ? 'Generating...' : (form.photo && form.prompt === generatedPrompt) ? 'Regenerate' : 'Generate'}
+            <span className={generatingImg ? 'animate-pulse' : ''}>
+              {generatingImg ? generatingMsg : (form.photo && form.prompt === generatedPrompt) ? 'Regenerate' : 'Generate'}
+            </span>
           </button>
         </div>
 
