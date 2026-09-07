@@ -1,18 +1,18 @@
 # Picasso AI -- AI Image Generator
 
-A full-stack AI image generation app built with the MERN stack. Enter a text prompt, generate stunning images using FLUX AI, and share your creations with the community.
+A full-stack AI image generation app built with the MERN stack. Enter a text prompt, generate stunning images using Flux AI, and share your creations with the community.
 
 ## Demo
 
 [Watch Demo on YouTube](https://youtu.be/6UhmIMZTjvg)
 
-> **Note:** First image generation may take 20-30 seconds due to server cold start. Subsequent requests are fast.
+**Note:** First image generation may take 20-30 seconds due to server cold start. Subsequent requests are fast.
 
 ---
 
 ## Features
 
-- AI image generation from text prompts powered by FLUX AI
+- AI image generation from text prompts powered by Flux AI
 - Community gallery to explore and share creations
 - Search images by prompt or creator name
 - 4-way gallery sort (newest, oldest, A-Z, Z-A)
@@ -39,7 +39,7 @@ A full-stack AI image generation app built with the MERN stack. Enter a text pro
 - Cloudinary (image hosting)
 
 ### AI
-- FLUX AI via Pollinations.ai
+- Flux AI via Pollinations.ai
 
 ---
 
